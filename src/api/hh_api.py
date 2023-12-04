@@ -1,7 +1,5 @@
 from typing import Any, Dict
-
 import requests
-
 from src.api.abstract_api import Api
 
 
