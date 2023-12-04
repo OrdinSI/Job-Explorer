@@ -1,5 +1,6 @@
 from src.api.hh_api import HeadHunterApi
 from src.api.superjob_api import SuperJobApi
+from src.vacancies_save.json_saver import JsonSaver
 
 
 # Создание экземпляра класса для работы с вакансиями
@@ -29,8 +30,12 @@ def user_interaction():
         hh_vacancies = hh_api.get_vacancies(search_query)
         sj_vacancies = sj_api.get_vacancies(search_query)
 
-    print(f"hh_vacancies: {hh_vacancies}")
-    print(f"sj_vacancies: {sj_vacancies}")
+    save_vacancy = [hh_vacancies, sj_vacancies]
+    json_saver = JsonSaver()
+    json_saver.add_vacancy(save_vacancy)
+
+
+
 
     # top_n = int(input("Введите количество вакансий для вывода в топ N: "))
     # filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
