@@ -1,19 +1,22 @@
 class Vacancy:
     """ Класс для работы с вакансиями"""
 
-    def __init__(self, name: str, url: str, salary: [str, int, float], description: str) -> None:
-        self.validate_data(name, url, salary, description)
+    def __init__(self, name: str, url: str, area: str, salary: [str, int, float], description: str) -> None:
+        self.validate_data(name, url, area, salary, description)
         self.name = name
         self.url = url
+        self.area = area
         self.salary = salary
         self.description = description
 
     @classmethod
-    def validate_data(cls, name, url, salary, description):
+    def validate_data(cls, name, url, area, salary, description):
         """ Метод для валидации данных"""
-        if not isinstance(name, str) or not isinstance(url, str) or not isinstance(salary,
-                                                                                   (str, int, float)) or not isinstance(
-                description, str):
+        if (not isinstance(name, str)
+                or not isinstance(url, str)
+                or not isinstance(area, str)
+                or not isinstance(salary, (str, int, float))
+                or not isinstance(description, str)):
             raise ValueError("Некорректный формат данных")
 
         if not name or not url or not description:
@@ -33,4 +36,4 @@ class Vacancy:
         return NotImplemented
 
     def __repr__(self):
-        return f"Vacancy(name={self.name}, url={self.url}, salary={self.salary}, description={self.description})"
+        return f"Vacancy(name={self.name}, url={self.url}, area={self.area}, salary={self.salary}, description={self.description})"

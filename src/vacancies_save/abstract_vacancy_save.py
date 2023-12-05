@@ -9,9 +9,13 @@ class VacancySaver(ABC):
         pass
 
     @abstractmethod
-    def get_vacancy(self):
+    def get_vacancy(self, number_vacancy):
         pass
 
     @abstractmethod
-    def delete_vacancy(self):
+    def delete_vacancy(self, number_vacancy):
+        pass
+
+    @abstractmethod
+    def get_all_vacancies(self):
         pass
