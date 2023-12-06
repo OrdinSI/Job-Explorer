@@ -8,24 +8,32 @@ def convert_to_vacancies(vacancies_data, platform):
             salary_info = v.get('salary')
             salary = salary_info.get("from") if salary_info else None
             salary = salary if salary is not None and salary != 0 else "Не указана"
-            snippets = v.get('snippet') or {}
+            snippets_info = v.get('snippet')
+            snippet = snippets_info.get('requirement') if snippets_info else None
+            snippet = snippet if snippet is not None else "Не указано"
+            area_info = v.get('area')
+            area = area_info.get('name') if area_info else None
+            area = area if area is not None else "Не указано"
             vacancies.append(Vacancy(
-                name=v.get('name', ''),
-                area=v.get('area').get('name'),
-                url=v.get('alternate_url', ''),
+                name=v.get('name', "Не указана"),
+                area=area,
+                url=v.get('alternate_url', "Не указан"),
                 salary=salary,
-                description=snippets.get('requirement', '')
+                description=snippet
             ))
     elif platform == "sj":
         for v in vacancies_data.get('objects', []):
             salary = v.get('payment_from')
             salary = salary if salary is not None and salary != 0 else "Не указана"
+            area_info = v.get('town')
+            area = area_info.get('title') if area_info else None
+            area = area if area is not None else "Не указано"
             vacancies.append(Vacancy(
-                name=v.get('profession', ''),
-                area=v.get('town').get('title'),
-                url=v.get('link', ''),
+                name=v.get('profession', "Не указана"),
+                area=area,
+                url=v.get('link', "Не указан"),
                 salary=salary,
-                description=v.get('candidat', '')
+                description=v.get('candidat', "Не указано")
             ))
     return vacancies
 

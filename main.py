@@ -30,6 +30,7 @@ def user_interaction():
     elif search_platforms.lower() == "sj":
         vacancies.extend(convert_to_vacancies(sj_api.get_vacancies(search_query), 'sj'))
     else:
+        print(hh_api.get_vacancies(search_query))
         vacancies.extend(convert_to_vacancies(hh_api.get_vacancies(search_query), 'hh'))
         vacancies.extend(convert_to_vacancies(sj_api.get_vacancies(search_query), 'sj'))
 
