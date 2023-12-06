@@ -8,6 +8,9 @@ class HeadHunterApi(Api):
 
     def get_vacancies(self, request: str) -> Dict[str, Any]:
         """Получение вакансий с HeadHunter по запросу"""
-        params = dict(text=request)
-        res = requests.get('https://api.hh.ru/vacancies', params=params)
-        return res.json()
+        try:
+            params = dict(text=request)
+            res = requests.get('https://api.hh.ru/vacancies', params=params)
+            return res.json()
+        except Exception as e:
+            print(f"Ошибка при получении вакансий с HeadHunter: {e}")

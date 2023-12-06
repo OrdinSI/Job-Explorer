@@ -8,9 +8,12 @@ class JsonSaver(VacancySaver):
 
     def add_vacancy(self, save_vacancy):
         """Сохраняет в файл vacancies"""
-        indexed_vacancies = {str(index): vacancy for index, vacancy in enumerate(save_vacancy, 1)}
-        with open('vacancies.json', "w", encoding='utf-8') as file:
-            json.dump(indexed_vacancies, file, indent=4, ensure_ascii=False)
+        try:
+            indexed_vacancies = {str(index): vacancy for index, vacancy in enumerate(save_vacancy, 1)}
+            with open('vacancies.json', "w", encoding='utf-8') as file:
+                json.dump(indexed_vacancies, file, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"Произошла ошибка при сохранении файла: {e}")
 
     def delete_vacancy(self, number_vacancy):
         """ Удаляет вакансию"""
