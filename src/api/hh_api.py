@@ -1,6 +1,7 @@
 from typing import Any, Dict
 import requests
 from src.api.abstract_api import Api
+import logging
 
 
 class HeadHunterApi(Api):
@@ -13,4 +14,4 @@ class HeadHunterApi(Api):
             res = requests.get('https://api.hh.ru/vacancies', params=params)
             return res.json()
         except Exception as e:
-            print(f"Ошибка при получении вакансий с HeadHunter: {e}")
+            logging.error(f"Ошибка при получении вакансий с HeadHunter: {e}")

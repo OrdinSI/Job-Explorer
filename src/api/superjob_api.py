@@ -3,6 +3,7 @@ from typing import Any, Dict
 import requests
 from dotenv import load_dotenv
 from src.api.abstract_api import Api
+import logging
 
 
 class SuperJobApi(Api):
@@ -20,4 +21,4 @@ class SuperJobApi(Api):
             res = requests.get("https://api.superjob.ru/2.0/vacancies/", params=params, headers=headers)
             return res.json()
         except Exception as e:
-            print(f"Ошибка при получении вакансий с SuperJob: {e}")
+            logging.error(f"Ошибка при получении вакансий с SuperJob: {e}")

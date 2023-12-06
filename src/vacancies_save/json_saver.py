@@ -1,5 +1,5 @@
 import json
-
+import logging
 from src.vacancies_save.abstract_vacancy_save import VacancySaver
 
 
@@ -13,7 +13,7 @@ class JsonSaver(VacancySaver):
             with open('vacancies.json', "w", encoding='utf-8') as file:
                 json.dump(indexed_vacancies, file, indent=4, ensure_ascii=False)
         except Exception as e:
-            print(f"Произошла ошибка при сохранении файла: {e}")
+            logging.error(f"Произошла ошибка при сохранении файла: {e}")
 
     def delete_vacancy(self, number_vacancy):
         """ Удаляет вакансию"""
@@ -28,10 +28,10 @@ class JsonSaver(VacancySaver):
             else:
                 return False
         except FileNotFoundError:
-            print("Файл vacancies.json не найден.")
+            logging.error("Файл vacancies.json не найден.")
             return False
         except json.JSONDecodeError:
-            print("Ошибка декодирования JSON.")
+            logging.error("Ошибка декодирования JSON.")
             return False
 
     def get_vacancy(self, number_vacancy):
@@ -42,9 +42,9 @@ class JsonSaver(VacancySaver):
                 vacancy_info = data.get(str(number_vacancy))
                 return vacancy_info
         except FileNotFoundError:
-            print("Файл vacancies.json не найден.")
+            logging.error("Файл vacancies.json не найден.")
         except json.JSONDecodeError:
-            print("Ошибка декодирования JSON.")
+            logging.error("Ошибка декодирования JSON.")
 
     def get_all_vacancies(self):
         """Возвращает все сохраненные вакансии."""
@@ -53,8 +53,8 @@ class JsonSaver(VacancySaver):
                 data = json.load(file)
             return list(data.values())
         except FileNotFoundError:
-            print("Файл vacancies.json не найден.")
+            logging.error("Файл vacancies.json не найден.")
             return []
         except json.JSONDecodeError:
-            print("Ошибка декодирования JSON.")
+            logging.error("Ошибка декодирования JSON.")
             return []

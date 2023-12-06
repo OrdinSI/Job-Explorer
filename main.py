@@ -1,23 +1,28 @@
-from colorama import Fore, Style
-
+from src.utils.colors import Colors
+import logging
 from src.api.hh_api import HeadHunterApi
 from src.api.superjob_api import SuperJobApi
 from src.utils.config import *
 from src.utils.conversion import *
 from src.utils.filter import *
 from src.vacancies_save.json_saver import JsonSaver
+from src.utils.messages import *
+
+logging.basicConfig(
+    #filename='job_explorer.log',
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(module)s:  [%(funcName)s] %(message)s'
+)
 
 
 def user_interaction():
     """ Основная функция для взаимодействия с пользователем"""
     vacancies = []
-    print(
-        f"{Fore.MAGENTA}Привет!\nЯ представляю собой программу для поиска вакансий на платформах HeadHunter и SuperJob.{Style.RESET_ALL}")
-    search_query = input(f"{Fore.CYAN}Пожалуйста, введите ваш поисковый запрос: {Style.RESET_ALL}")
+    Colors.print_magenta(GREETING)
+    search_query = Colors.input_cyan(ENTER_QUERY)
 
     # Выбор платформы
-    search_platforms = input(
-        f"{Fore.CYAN}Выберите платформу (HH - HeadHunter, SJ - SuperJob, Enter - все платформы): {Style.RESET_ALL}")
+    search_platforms = Colors.input_cyan(ENTER_PLATFORM)
     hh_api = HeadHunterApi()
     sj_api = SuperJobApi()
     if search_platforms.lower() == "hh":
@@ -37,80 +42,62 @@ def user_interaction():
 
     while True:
         # Предлагаем пользователю выбор действия
-        print(f"""{Fore.MAGENTA}
-        Выберите действие:
-        1. Посмотреть весь список вакансий.
-        2. Просмотреть информацию о вакансии.
-        3. Фильтр по зарплате.
-        4. Поиск по ключевому слову в описании.
-        5. Удалить вакансию.
-        6. Выход.
-        {Style.RESET_ALL}""")
-
-        choice = input(f"{Fore.CYAN}Введите номер действия: {Style.RESET_ALL}")
+        Colors.print_magenta(PRINT_CHOICE)
+        choice = Colors.input_cyan(INPUT_CHOICE)
 
         if choice == "1":
             # Выводим список вакансий
             vacancies_dicts = json_saver.get_all_vacancies()
             for index, vacancy in enumerate(vacancies_dicts, start=1):
-                print(
-                    f"{Fore.BLUE}{index}. Вакансия: {vacancy.get('name')}, Зарплата: {vacancy.get('salary')}{Style.RESET_ALL}")
+                Colors.print_blue(PRINT_VACANCIES.format(index, vacancy.get('name'), vacancy.get('salary')))
                 continue
 
         if choice == "2":
             # Выводим информацию по конкретной вакансии по номеру
-            number_vacancy = input(
-                f"{Fore.CYAN}Введите номер вакансии для отображения информации по ней: {Style.RESET_ALL}")
+            number_vacancy = Colors.input_cyan(ENTER_NUMBER_VACANCY)
 
             vacancy_info = json_saver.get_vacancy(number_vacancy)
             if vacancy_info:
                 for key, value in vacancy_info.items():
                     name = KEYS_TO_NAMES.get(key, key)
-                    print(f"{Fore.BLUE}{name}: {value}")
+                    Colors.print_blue(PRINT_VACANCY.format(name, value))
             else:
-                print(f"{Fore.RED}Вакансия с номером {number_vacancy} не найдена.{Style.RESET_ALL}")
+                Colors.print_red(NOT_VACANCY_NUMBER.format(number_vacancy))
 
         if choice == "3":
             # Фильтр по зарплате
-            min_salary = input(
-                f"{Fore.CYAN}Введите минимальную желаемую зарплату (или оставьте пустым, чтобы не фильтровать): {Style.RESET_ALL}")
+            min_salary = Colors.input_cyan(ENTER_SALARY)
             if min_salary:
                 min_salary = int(min_salary)
                 vacancies_dicts = filter_by_salary(vacancies_dicts, min_salary)
-                for index, vacancy in enumerate(vacancies_dicts, start=1):
-                    print(
-                        f"{Fore.BLUE}{index}. Вакансия: {vacancy.get('name')}, Зарплата: {vacancy.get('salary')}{Style.RESET_ALL}")
+                for vacancy in vacancies_dicts:
+                    Colors.print_blue(PRINT_VACANCIES.format(vacancy['id'], vacancy['name'], vacancy['salary']))
 
         if choice == "4":
             # Поиск по ключевому слову в описании
-            keyword = input(
-                f"{Fore.CYAN}Введите ключевое слово для поиска в описании (или оставьте пустым, чтобы не фильтровать): {Style.RESET_ALL}")
+            keyword = Colors.input_cyan(ENTER_KEYWORD)
             if keyword:
                 vacancies_dicts = filter_by_keyword(vacancies_dicts, keyword)
             if not vacancies_dicts:
-                print(f"{Fore.RED}По вашим критериям не найдено ни одной вакансии.{Style.RESET_ALL}")
+                Colors.print_red(NOT_VACANCY_KEYWORD)
             else:
-                for index, vacancy in enumerate(vacancies_dicts, start=1):
-                    print(
-                        f"{Fore.BLUE}{index}. Вакансия: {vacancy.get('name')}, Зарплата: {vacancy.get('salary')}{Style.RESET_ALL}")
+                for vacancy in vacancies_dicts:
+                    Colors.print_blue(PRINT_VACANCIES.format(vacancy['id'], vacancy['name'], vacancy['salary']))
 
         if choice == "5":
             # Позволяем пользователю удалять вакансии из файла
-            delete_vacancy_number = input(
-                f"{Fore.CYAN}Введите номер вакансии для удаления (или нажмите Enter, чтобы продолжить): {Style.RESET_ALL}")
+            delete_vacancy_number = Colors.input_cyan(ENTER_DELETE_VACANCY)
             if delete_vacancy_number:
                 if json_saver.delete_vacancy(delete_vacancy_number):
-                    print(f"{Fore.RED}Вакансия с номером {delete_vacancy_number} удалена.{Style.RESET_ALL}")
+                    Colors.print_red(CONFIRMATION_DELETE_VACANCY.format(delete_vacancy_number))
                     vacancies_dicts = json_saver.get_all_vacancies()
                     for index, vacancy in enumerate(vacancies_dicts, start=1):
-                        print(
-                            f"{Fore.BLUE}{index}. Вакансия: {vacancy.get('name')}, Зарплата: {vacancy.get('salary')}{Style.RESET_ALL}")
+                        Colors.print_blue(PRINT_VACANCIES.format(index, vacancy.get('name'), vacancy.get('salary')))
                 else:
-                    print(
-                        f"{Fore.RED}Не удалось удалить вакансию с номером {delete_vacancy_number}. Возможно, она уже была удалена.{Style.RESET_ALL}")
+                    Colors.print_red(ERROR_DELETE_VACANCY.format(delete_vacancy_number))
 
         if choice == "6":
-            print(f"{Fore.MAGENTA}Всего доброго!{Style.RESET_ALL}")
+            Colors.print_magenta(GOODBYE_MESSAGE)
             break
 
 
