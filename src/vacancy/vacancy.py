@@ -16,7 +16,7 @@ class Vacancy:
                 or not isinstance(url, str)
                 or not isinstance(area, str)
                 or not isinstance(salary, (str, int, float))
-                        or not isinstance(description, str)):
+                or not isinstance(description, str)):
             raise ValueError("Некорректный формат данных")
 
         if not name or not url or not description:
