@@ -1,8 +1,9 @@
 import os
-import requests
 from typing import Any, Dict
+import requests
 from dotenv import load_dotenv
 from src.api.abstract_api import Api
+import logging
 
 
 class SuperJobApi(Api):
@@ -12,10 +13,12 @@ class SuperJobApi(Api):
         load_dotenv()
         self.secret_key = os.getenv('Secret_Key')
 
-
     def get_vacancies(self, request: str) -> Dict[str, Any]:
         """Получение вакансий с SuperJob по запросу"""
-        params = dict(keyword=request)
-        headers = {"X-Api-App-Id": self.secret_key}
-        res = requests.get("https://api.superjob.ru/2.0/vacancies/", params=params, headers=headers)
-        return res.json()
+        try:
+            params = dict(keyword=request)
+            headers = {"X-Api-App-Id": self.secret_key}
+            res = requests.get("https://api.superjob.ru/2.0/vacancies/", params=params, headers=headers)
+            return res.json()
+        except Exception as e:
+            logging.error(f"Ошибка при получении вакансий с SuperJob: {e}")
